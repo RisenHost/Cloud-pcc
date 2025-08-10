@@ -8,6 +8,8 @@
 
 ## Install (Debian/Ubuntu)
 ```bash
-git clone <your-repo>
-cd <your-repo>
-sudo bash install.sh
+git clone https://github.com/RisenHost/Cloud-pcc
+cd Cloud-pcc
+bash install.sh
+
+# Enjoy the bot scripts lovely fams of BiraloGaming. ♥️
