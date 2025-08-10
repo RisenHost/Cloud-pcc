@@ -12,4 +12,4 @@ git clone https://github.com/RisenHost/Cloud-pcc
 cd Cloud-pcc
 bash install.sh
 
-# Enjoy the bot scripts lovely fams of BiraloGaming. ♥️
+# Enjoy the bot scripts lovely fams of BiraloGaming.
