@@ -1,43 +1,32 @@
 #!/usr/bin/env bash
 set -e
-# Minimal installer: creates venv, installs requirements, prompts token -> writes .env
+GREEN="\e[32m"; CYAN="\e[36m"; RED="\e[31m"; RESET="\e[0m"
 
-if [ "$(id -u)" -ne 0 ]; then
-  SUDO=sudo
-else
-  SUDO=
-fi
+echo -e "${CYAN}🚀 Installing VPS Bot...${RESET}"
 
-echo "=> Updating package list (best-effort)..."
-$SUDO apt-get update -y || true
+# Step 1: Install deps
+echo -e "${GREEN}📦 Installing dependencies...${RESET}"
+apt-get update -y
+apt-get install -y python3 python3-pip python3-venv docker.io
 
-echo "=> Installing python3, venv and pip (best-effort)..."
-$SUDO apt-get install -y python3 python3-venv python3-pip git || true
+# Step 2: Build VPS Docker image
+echo -e "${GREEN}🐳 Building Docker image for VPS containers...${RESET}"
+docker build -t ubuntu-22.04-with-tmate .
 
-echo "=> Creating python virtualenv 'venv'..."
+# Step 3: Python env
+echo -e "${GREEN}🐍 Setting up Python virtual environment...${RESET}"
 python3 -m venv venv
-
-echo "=> Activating venv and installing Python packages..."
-. venv/bin/activate
+source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# create .env if missing
-if [ -f .env ]; then
-  echo ".env already exists - skipping token prompt."
-else
-  echo -n "Enter your Discord Bot Token (kept in .env): "
-  read -r TOKEN
+# Step 4: Create .env
+if [ ! -f .env ]; then
+  echo -e "${GREEN}🔑 Enter your Discord bot token:${RESET}"
+  read TOKEN
   echo "VPS_BOT_TOKEN=${TOKEN}" > .env
-  echo ".env created."
+  echo -e "${GREEN}✅ Saved to .env${RESET}"
 fi
 
-echo "=> If Docker is available, building ubuntu-tmate image (optional)..."
-if command -v docker &> /dev/null; then
-  docker build -t ubuntu-tmate . || true
-fi
-
-echo "Installation finished."
-echo "To run the bot:"
-echo "  . venv/bin/activate"
-echo "  python3 vps_bot.py"
+echo -e "${CYAN}🎉 Installation complete!${RESET}"
+echo -e "${GREEN}Run the bot with:${RESET} source venv/bin/activate && python3 bot.py"
