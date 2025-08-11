@@ -1,32 +1,33 @@
-#!/usr/bin/env bash
-set -e
-GREEN="\e[32m"; CYAN="\e[36m"; RED="\e[31m"; RESET="\e[0m"
+#!/bin/bash
+clear
+echo "🚀 VPS Bot Installer"
+sleep 1
 
-echo -e "${CYAN}🚀 Installing VPS Bot...${RESET}"
+# Update system
+echo "📦 Updating system..."
+sudo apt-get update -y && sudo apt-get upgrade -y
 
-# Step 1: Install deps
-echo -e "${GREEN}📦 Installing dependencies...${RESET}"
-apt-get update -y
-apt-get install -y python3 python3-pip python3-venv docker.io
+# Install dependencies
+echo "⚙ Installing dependencies..."
+sudo apt-get install -y python3 python3-pip docker.io git
 
-# Step 2: Build VPS Docker image
-echo -e "${GREEN}🐳 Building Docker image for VPS containers...${RESET}"
-docker build -t ubuntu-22.04-with-tmate .
+# Install Python packages
+echo "🐍 Installing Python packages..."
+pip3 install -r requirements.txt
 
-# Step 3: Python env
-echo -e "${GREEN}🐍 Setting up Python virtual environment...${RESET}"
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+# Create .env
+echo "🔑 Enter your Discord bot token:"
+read token
+echo "DISCORD_TOKEN=$token" > .env
 
-# Step 4: Create .env
-if [ ! -f .env ]; then
-  echo -e "${GREEN}🔑 Enter your Discord bot token:${RESET}"
-  read TOKEN
-  echo "VPS_BOT_TOKEN=${TOKEN}" > .env
-  echo -e "${GREEN}✅ Saved to .env${RESET}"
-fi
+# Start Docker
+echo "🐳 Starting Docker..."
+sudo systemctl enable docker
+sudo systemctl start docker
 
-echo -e "${CYAN}🎉 Installation complete!${RESET}"
-echo -e "${GREEN}Run the bot with:${RESET} source venv/bin/activate && python3 bot.py"
+# Build Docker image
+echo "🏗 Building VPS container image..."
+sudo docker build -t ubuntu-tmate .
+
+echo "✅ Installation complete!"
+echo "➡ Run: python3 vps_bot.py"
