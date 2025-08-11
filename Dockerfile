@@ -1,10 +1,7 @@
-# Dockerfile for VPS containers with tmate
-FROM ubuntu:22.04
-ENV DEBIAN_FRONTEND=noninteractive
+FROM ubuntu:20.04
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        tmate openssh-client curl iproute2 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get install -y tmate openssh-server && \
+    apt-get clean
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["bash"]
