@@ -1,6 +1,4 @@
-# Dockerfile - ubuntu + tmate (keeps container alive so bot can exec tmate)
 FROM ubuntu:20.04
-
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
@@ -8,5 +6,5 @@ RUN apt-get update && \
       tmate openssh-client ca-certificates curl && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Keep container alive; tmate session will be created by bot via `docker exec`
+# Keep container alive; the bot will exec tmate inside containers it creates.
 CMD ["tail", "-f", "/dev/null"]
