@@ -1,33 +1,37 @@
 #!/bin/bash
 clear
-echo "🚀 VPS Bot Installer"
+echo "🚀 Starting VPS Bot installation..."
 sleep 1
 
-# Update system
-echo "📦 Updating system..."
-sudo apt-get update -y && sudo apt-get upgrade -y
+# Step 1: System update
+echo "📦 [1/4] Updating system..."
+sudo apt update -y && sudo apt upgrade -y
+sleep 1
 
-# Install dependencies
-echo "⚙ Installing dependencies..."
-sudo apt-get install -y python3 python3-pip docker.io git
+# Step 2: Install dependencies
+echo "⚙️ [2/4] Installing Python, pip, and git..."
+sudo apt install -y python3 python3-pip python3-venv git
+sleep 1
 
-# Install Python packages
-echo "🐍 Installing Python packages..."
-pip3 install -r requirements.txt
+# Step 3: Create venv and install Python packages
+echo "📥 [3/4] Setting up Python virtual environment..."
+python3 -m venv venv
+source venv/bin/activate
 
-# Create .env
-echo "🔑 Enter your Discord bot token:"
-read token
-echo "DISCORD_TOKEN=$token" > .env
+# Install requirements if file exists, otherwise create one
+if [ ! -f requirements.txt ]; then
+    echo "discord.py==2.3.2" > requirements.txt
+fi
 
-# Start Docker
-echo "🐳 Starting Docker..."
-sudo systemctl enable docker
-sudo systemctl start docker
+pip install --upgrade pip
+pip install -r requirements.txt
+sleep 1
 
-# Build Docker image
-echo "🏗 Building VPS container image..."
-sudo docker build -t ubuntu-tmate .
+# Step 4: Ask for bot token & save to .env
+echo "🔑 [4/4] Enter your Discord bot token:"
+read BOT_TOKEN
+echo "TOKEN=\"$BOT_TOKEN\"" > .env
 
+# Done
 echo "✅ Installation complete!"
-echo "➡ Run: python3 vps_bot.py"
+echo "To start the bot, run: ./start.sh"
